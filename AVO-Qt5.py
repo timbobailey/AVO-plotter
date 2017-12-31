@@ -3,8 +3,7 @@
 import sys
 from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QSlider, \
                             QVBoxLayout, QHBoxLayout, QGridLayout, \
-                            QLineEdit, \
-                            QApplication
+                            QLineEdit, QApplication
 from PyQt5.QtCore import QCoreApplication, Qt
 from PyQt5.QtGui import QIcon
 
@@ -12,82 +11,74 @@ class mainWindow(QWidget):
 
     def __init__(self):
         super().__init__()
-
         self.initUI()
 
     def initUI(self):
-
-
         grid = QGridLayout()
         grid.setSpacing(10)
 
-        vpUpperLabel = QLabel("Vp Upper")
-        vsUpperLabel = QLabel("Vs Upper")
-        rhoUpperLabel = QLabel("Rho Upper")
+        self.vpUpperLabel = QLabel("Vp Upper")
+        self.vsUpperLabel = QLabel("Vs Upper")
+        self.rhoUpperLabel = QLabel("Rho Upper")
 
-        vpLowerLabel = QLabel("Vp Lower")
-        vsLowerLabel = QLabel("Vs Lower")
-        rhoLowerLabel = QLabel("Rho Lower")
+        self.vpLowerLabel = QLabel("Vp Lower")
+        self.vsLowerLabel = QLabel("Vs Lower")
+        self.rhoLowerLabel = QLabel("Rho Lower")
 
         """
         Sliders
         """
-        vpUpperSlider = QSlider(Qt.Horizontal)
-        vpUpperSlider.setMinimum(0)
-        vpUpperSlider.setMaximum(8000)
-        vpUpperSlider.setValue(4000)
-        vpUpperSlider.setTickPosition(QSlider.TicksBelow)
-        vpUpperSlider.setTickInterval(10)
+        self.vpUpperSlider = QSlider(Qt.Horizontal)
+        self.vpUpperSlider.setMinimum(0)
+        self.vpUpperSlider.setMaximum(8000)
+        self.vpUpperSlider.setValue(4000)
+        self.vpUpperSlider.setTickPosition(QSlider.TicksBelow)
+        self.vpUpperSlider.setTickInterval(10)
 
-        vsUpperSlider = QSlider(Qt.Horizontal)
-        vsUpperSlider.setMinimum(10)
-        vsUpperSlider.setMaximum(30)
-        vsUpperSlider.setValue(20)
-        vsUpperSlider.setTickPosition(QSlider.TicksBelow)
-        vsUpperSlider.setTickInterval(5)
+        self.vsUpperSlider = QSlider(Qt.Horizontal)
+        self.vsUpperSlider.setMinimum(10)
+        self.vsUpperSlider.setMaximum(30)
+        self.vsUpperSlider.setValue(20)
+        self.vsUpperSlider.setTickPosition(QSlider.TicksBelow)
+        self.vsUpperSlider.setTickInterval(5)
 
-        rhoUpperSlider = QSlider(Qt.Horizontal)
-        rhoUpperSlider.setMinimum(10)
-        rhoUpperSlider.setMaximum(30)
-        rhoUpperSlider.setValue(20)
-        rhoUpperSlider.setTickPosition(QSlider.TicksBelow)
-        rhoUpperSlider.setTickInterval(5)
-
+        self.rhoUpperSlider = QSlider(Qt.Horizontal)
+        self.rhoUpperSlider.setMinimum(10)
+        self.rhoUpperSlider.setMaximum(30)
+        self.rhoUpperSlider.setValue(20)
+        self.rhoUpperSlider.setTickPosition(QSlider.TicksBelow)
+        self.rhoUpperSlider.setTickInterval(5)
 
         """
         Text boxes
         """
-        vpValue = QLineEdit(self)
+        self.vpValue = QLineEdit(self)
 
-        grid.addWidget(vpUpperLabel, 0, 1)
-        grid.addWidget(vpUpperSlider, 0, 2)
-        grid.addWidget(vpValue, 0, 3)
+        grid.addWidget(self.vpUpperLabel, 0, 1)
+        grid.addWidget(self.vpUpperSlider, 0, 2)
+        grid.addWidget(self.vpValue, 0, 3)
 
-        grid.addWidget(vsUpperLabel, 1, 1)
-        grid.addWidget(vsUpperSlider, 1, 2)
+        grid.addWidget(self.vsUpperLabel, 1, 1)
+        grid.addWidget(self.vsUpperSlider, 1, 2)
 
-        grid.addWidget(rhoUpperLabel, 2, 1)
-        grid.addWidget(rhoUpperSlider, 2, 2)
+        grid.addWidget(self.rhoUpperLabel, 2, 1)
+        grid.addWidget(self.rhoUpperSlider, 2, 2)
 
-
-        vpUpperSlider.valueChanged.connect(self.on_vpSliderChange)
+        self.vpUpperSlider.valueChanged.connect(self.on_vpUpperSliderChange)
         self.setLayout(grid)
-
 
         """
         Size and display
         """
         self.resize(600, 600)
-        self.setGeometry(500, 300, 250, 150)
+        self.setGeometry(500, 300, 600, 300)
         self.setWindowTitle('AVO plotter')
         self.setWindowIcon(QIcon('web.png'))
         self.show()
 
-    def on_vpSliderChange(self):
-        print('event')
-
-        #print('value: ', self.vpUpperSlider.value())
-        #self.vpValue.setValue(self.vpUpperSlider.value)
+    def on_vpUpperSliderChange(self):
+        value = str( self.vpUpperSlider.value() )
+        self.vpValue.setText(value)
 
 
 if __name__ == '__main__':
