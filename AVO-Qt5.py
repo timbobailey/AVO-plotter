@@ -3,6 +3,7 @@
 import sys
 from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QSlider, \
                             QVBoxLayout, QHBoxLayout, QGridLayout, \
+                            QLineEdit, \
                             QApplication
 from PyQt5.QtCore import QCoreApplication, Qt
 from PyQt5.QtGui import QIcon
@@ -16,44 +17,62 @@ class mainWindow(QWidget):
 
     def initUI(self):
 
-        """
-        Sliders
-        """
+
         grid = QGridLayout()
         grid.setSpacing(10)
 
         vpUpperLabel = QLabel("Vp Upper")
+        vsUpperLabel = QLabel("Vs Upper")
+        rhoUpperLabel = QLabel("Rho Upper")
+
+        vpLowerLabel = QLabel("Vp Lower")
+        vsLowerLabel = QLabel("Vs Lower")
+        rhoLowerLabel = QLabel("Rho Lower")
+
+        """
+        Sliders
+        """
+        vpUpperSlider = QSlider(Qt.Horizontal)
+        vpUpperSlider.setMinimum(0)
+        vpUpperSlider.setMaximum(8000)
+        vpUpperSlider.setValue(4000)
+        vpUpperSlider.setTickPosition(QSlider.TicksBelow)
+        vpUpperSlider.setTickInterval(10)
+
+        vsUpperSlider = QSlider(Qt.Horizontal)
+        vsUpperSlider.setMinimum(10)
+        vsUpperSlider.setMaximum(30)
+        vsUpperSlider.setValue(20)
+        vsUpperSlider.setTickPosition(QSlider.TicksBelow)
+        vsUpperSlider.setTickInterval(5)
+
+        rhoUpperSlider = QSlider(Qt.Horizontal)
+        rhoUpperSlider.setMinimum(10)
+        rhoUpperSlider.setMaximum(30)
+        rhoUpperSlider.setValue(20)
+        rhoUpperSlider.setTickPosition(QSlider.TicksBelow)
+        rhoUpperSlider.setTickInterval(5)
 
 
-        slider = QSlider(Qt.Horizontal)
-        slider.setMinimum(10)
-        slider.setMaximum(30)
-        slider.setValue(20)
-        slider.setTickPosition(QSlider.TicksBelow)
-        slider.setTickInterval(5)
+        """
+        Text boxes
+        """
+        vpValue = QLineEdit(self)
 
         grid.addWidget(vpUpperLabel, 0, 1)
-        grid.addWidget(slider, 1, 1)
+        grid.addWidget(vpUpperSlider, 0, 2)
+        grid.addWidget(vpValue, 0, 3)
+
+        grid.addWidget(vsUpperLabel, 1, 1)
+        grid.addWidget(vsUpperSlider, 1, 2)
+
+        grid.addWidget(rhoUpperLabel, 2, 1)
+        grid.addWidget(rhoUpperSlider, 2, 2)
 
 
-        #slider.valueChanged.connect(self.valuechange)
+        vpUpperSlider.valueChanged.connect(self.on_vpSliderChange)
         self.setLayout(grid)
 
-        """
-        quitButton = QPushButton('Quit', self)
-        quitButton.clicked.connect(QCoreApplication.instance().quit)
-        quitButton.resize(quitButton.sizeHint())
-
-        hbox = QHBoxLayout()
-        hbox.addStretch(1)
-        hbox.addWidget(quitButton)
-
-        vbox = QVBoxLayout()
-        vbox.addStretch(1)
-        vbox.addLayout(hbox)
-
-        self.setLayout(vbox)
-        """
 
         """
         Size and display
@@ -63,6 +82,12 @@ class mainWindow(QWidget):
         self.setWindowTitle('AVO plotter')
         self.setWindowIcon(QIcon('web.png'))
         self.show()
+
+    def on_vpSliderChange(self):
+        print('event')
+
+        #print('value: ', self.vpUpperSlider.value())
+        #self.vpValue.setValue(self.vpUpperSlider.value)
 
 
 if __name__ == '__main__':
