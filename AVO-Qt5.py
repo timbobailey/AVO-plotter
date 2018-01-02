@@ -6,6 +6,10 @@ from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QSlider, \
                             QLineEdit, QApplication
 from PyQt5.QtCore import QCoreApplication, Qt
 from PyQt5.QtGui import QIcon
+import numpy as np
+import matplotlib.pyplot as plt
+
+from bruges.bruges.reflection import reflection as avomodel
 
 class mainWindow(QWidget):
 
@@ -17,51 +21,69 @@ class mainWindow(QWidget):
     VS_MAX = 10000
     VS_STEP = 50
 
-    RHO_MIN = 1.0
-    RHO_MAX = 3.5
-    RHO_STEP = 0.1
+    RHO_MIN = 1000
+    RHO_MAX = 3500
+    RHO_STEP = 50
 
     def __init__(self):
         super().__init__()
         self.initUI()
 
     def initUI(self):
-        grid = QGridLayout()
-        grid.setSpacing(10)
+        hBox1 = QHBoxLayout()
+        hBox2 = QHBoxLayout()
+        hBox3 = QHBoxLayout()
+
+        hBox4 = QHBoxLayout()
+        hBox5 = QHBoxLayout()
+        hBox6 = QHBoxLayout()
+
+        vBox1 = QVBoxLayout()
 
         self.initVpComponents()
         self.initVsComponents()
         self.initRhoComponents()
 
-        grid.addWidget(self.vpUpperLabel, 0, 1)
-        grid.addWidget(self.vpUpperSlider, 0, 2)
-        grid.addWidget(self.vpUpperValue, 0, 3)
+        hBox1.addWidget(self.vpUpperLabel)
+        hBox1.addWidget(self.vpUpperSlider)
+        hBox1.addWidget(self.vpUpperValue)
 
-        grid.addWidget(self.vsUpperLabel, 1, 1)
-        grid.addWidget(self.vsUpperSlider, 1, 2)
-        grid.addWidget(self.vsUpperValue, 1, 3)
+        hBox2.addWidget(self.vsUpperLabel)
+        hBox2.addWidget(self.vsUpperSlider)
+        hBox2.addWidget(self.vsUpperValue)
 
-        grid.addWidget(self.rhoUpperLabel, 2, 1)
-        grid.addWidget(self.rhoUpperSlider, 2, 2)
-        grid.addWidget(self.rhoUpperValue, 2, 3)
+        hBox3.addWidget(self.rhoUpperLabel)
+        hBox3.addWidget(self.rhoUpperSlider)
+        hBox3.addWidget(self.rhoUpperValue)
 
-        grid.addWidget(self.vpLowerLabel, 3, 1)
-        grid.addWidget(self.vpLowerSlider, 3, 2)
-        grid.addWidget(self.vpLowerValue, 3, 3)
+        hBox4.addWidget(self.vpLowerLabel)
+        hBox4.addWidget(self.vpLowerSlider)
+        hBox4.addWidget(self.vpLowerValue)
 
-        grid.addWidget(self.vsLowerLabel, 4, 1)
-        grid.addWidget(self.vsLowerSlider, 4, 2)
-        grid.addWidget(self.vsLowerValue, 4, 3)
+        hBox5.addWidget(self.vsLowerLabel)
+        hBox5.addWidget(self.vsLowerSlider)
+        hBox5.addWidget(self.vsLowerValue)
 
-        grid.addWidget(self.rhoLowerLabel, 5, 1)
-        grid.addWidget(self.rhoLowerSlider, 5, 2)
-        grid.addWidget(self.rhoLowerValue, 5, 3)
+        hBox6.addWidget(self.rhoLowerLabel)
+        hBox6.addWidget(self.rhoLowerSlider)
+        hBox6.addWidget(self.rhoLowerValue)
 
         self.vpUpperSlider.valueChanged.connect(self.on_vpUpperSliderChange)
         self.vsUpperSlider.valueChanged.connect(self.on_vsUpperSliderChange)
         self.rhoUpperSlider.valueChanged.connect(self.on_rhoUpperSliderChange)
 
-        self.setLayout(grid)
+        self.vpLowerSlider.valueChanged.connect(self.on_vpLowerSliderChange)
+        self.vsLowerSlider.valueChanged.connect(self.on_vsLowerSliderChange)
+        self.rhoLowerSlider.valueChanged.connect(self.on_rhoLowerSliderChange)
+
+        vBox1.addLayout(hBox1)
+        vBox1.addLayout(hBox2)
+        vBox1.addLayout(hBox3)
+        vBox1.addLayout(hBox4)
+        vBox1.addLayout(hBox5)
+        vBox1.addLayout(hBox6)
+
+        self.setLayout(vBox1)
 
         """
         Size and display
@@ -132,16 +154,16 @@ class mainWindow(QWidget):
         self.rhoUpperSlider = QSlider(Qt.Horizontal)
         self.rhoUpperSlider.setMinimum(self.RHO_MIN)
         self.rhoUpperSlider.setMaximum(self.RHO_MAX)
-        self.rhoUpperSlider.setValue(3500)
+        self.rhoUpperSlider.setValue(2650)
         self.rhoUpperSlider.setTickPosition(QSlider.TicksBelow)
-        self.rhoUpperSlider.setTickInterval(50)
+        self.rhoUpperSlider.setTickInterval(self.RHO_STEP)
 
         self.rhoLowerSlider = QSlider(Qt.Horizontal)
         self.rhoLowerSlider.setMinimum(self.RHO_MIN)
         self.rhoLowerSlider.setMaximum(self.RHO_MAX)
-        self.rhoLowerSlider.setValue(3500)
+        self.rhoLowerSlider.setValue(2650)
         self.rhoLowerSlider.setTickPosition(QSlider.TicksBelow)
-        self.rhoLowerSlider.setTickInterval(50)
+        self.rhoLowerSlider.setTickInterval(self.RHO_STEP)
         """
         Text boxes
         """
@@ -158,8 +180,38 @@ class mainWindow(QWidget):
         self.vsUpperValue.setText(value)
 
     def on_rhoUpperSliderChange(self):
-        value = str( self.rhoUpperSlider.value() )
+        value = str( self.rhoUpperSlider.value() / 1000 )
         self.rhoUpperValue.setText(value)
+
+    def on_vpLowerSliderChange(self):
+        value = str( self.vpLowerSlider.value() )
+        self.vpLowerValue.setText(value)
+
+    def on_vsLowerSliderChange(self):
+        value = str( self.vsLowerSlider.value() )
+        self.vsLowerValue.setText(value)
+
+    def on_rhoLowerSliderChange(self):
+        value = str( self.rhoLowerSlider.value() / 1000 )
+        self.rhoLowerValue.setText(value)
+
+    def drawplot(selfself):
+        min_theta = 0
+        max_theta = 100
+        step_theta = 1
+        theta = np.arange(min_theta, max_theta, step_theta)
+
+        avo = avomodel.zoeppritz_rpp(vp1, vs1, rho1, vp2, vs2, rho2, theta)
+
+        plt.plot(theta, avo, label="AVO")
+        plt.axis([min_theta, max_theta, -1, 1])
+        plt.xlabel('Theta')
+        plt.ylabel('Ref')
+
+        plt.legend()
+        plt.show()
+
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
