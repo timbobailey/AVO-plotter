@@ -2,14 +2,61 @@
 
 import sys
 from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QSlider, \
-                            QVBoxLayout, QHBoxLayout, QGridLayout, \
+                            QVBoxLayout, QHBoxLayout, QSizePolicy, \
                             QLineEdit, QApplication
 from PyQt5.QtCore import QCoreApplication, Qt
 from PyQt5.QtGui import QIcon
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
+from bruges.reflection import reflection as avomodel
 
-from bruges.bruges.reflection import reflection as avomodel
+class MyMplCanvas(FigureCanvas):
+    """Ultimately, this is a QWidget (as well as a FigureCanvasAgg, etc.)."""
+    def __init__(self, parent=None, width=5, height=4, dpi=100):
+        fig = Figure(figsize=(width, height), dpi=dpi)
+        self.axes = fig.add_subplot(111)
+        self.axes.hold(False)  # We want the axes cleared every time plot() is called
+
+        self.compute_initial_figure()
+        FigureCanvas.__init__(self, fig)
+        self.setParent(parent)
+
+        FigureCanvas.setSizePolicy(self, QSizePolicy.Expanding, QSizePolicy.Expanding)
+        FigureCanvas.updateGeometry(self)
+
+    def compute_initial_figure(self):
+        pass
+
+
+class MyStaticMplCanvas(MyMplCanvas):
+    def compute_initial_figure(self):
+        vp1 = 12250.
+        vp2 = 11600.
+        vs1 = 6620.
+        vs2 = 4050.
+        rho1 = 2.66
+        rho2 = 2.34
+        min_theta = 0
+        max_theta = 60
+        step_theta = 1
+        theta = np.arange(min_theta, max_theta, step_theta)
+
+        avo = avomodel.zoeppritz_rpp(vp1, vs1, rho1, vp2, vs2, rho2, theta)
+        print('avo:  ', avo)
+        """
+        self.plt.plot(theta, avo, label="AVO")
+        self.plt.axis([min_theta, max_theta, -1, 1])
+        self.plt.xlabel('Theta')
+        self.plt.ylabel('Ref')
+        self.plt.legend()
+        """
+        self.axes.plot()
+        self.axes.plot(min_theta, max_theta, -1, 1)
+
+        #self.axes.plot([min_theta, max_theta, -1, 1])
+
 
 class mainWindow(QWidget):
 
@@ -76,20 +123,23 @@ class mainWindow(QWidget):
         self.vsLowerSlider.valueChanged.connect(self.on_vsLowerSliderChange)
         self.rhoLowerSlider.valueChanged.connect(self.on_rhoLowerSliderChange)
 
+        plotBox = QHBoxLayout()
         vBox1.addLayout(hBox1)
         vBox1.addLayout(hBox2)
         vBox1.addLayout(hBox3)
         vBox1.addLayout(hBox4)
         vBox1.addLayout(hBox5)
         vBox1.addLayout(hBox6)
+        vBox1.addLayout(plotBox)
 
+        sc = MyStaticMplCanvas(self, width=6, height=8, dpi=200)
+        plotBox.addWidget(sc)
         self.setLayout(vBox1)
 
         """
         Size and display
         """
-        self.resize(600, 600)
-        self.setGeometry(500, 300, 600, 300)
+        self.setGeometry(500, 300, 600, 800)
         self.setWindowTitle('AVO plotter')
         self.setWindowIcon(QIcon('web.png'))
         self.show()
@@ -194,23 +244,6 @@ class mainWindow(QWidget):
     def on_rhoLowerSliderChange(self):
         value = str( self.rhoLowerSlider.value() / 1000 )
         self.rhoLowerValue.setText(value)
-
-    def drawplot(selfself):
-        min_theta = 0
-        max_theta = 100
-        step_theta = 1
-        theta = np.arange(min_theta, max_theta, step_theta)
-
-        avo = avomodel.zoeppritz_rpp(vp1, vs1, rho1, vp2, vs2, rho2, theta)
-
-        plt.plot(theta, avo, label="AVO")
-        plt.axis([min_theta, max_theta, -1, 1])
-        plt.xlabel('Theta')
-        plt.ylabel('Ref')
-
-        plt.legend()
-        plt.show()
-
 
 
 if __name__ == '__main__':
