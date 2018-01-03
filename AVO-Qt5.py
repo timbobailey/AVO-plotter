@@ -12,50 +12,6 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from bruges.reflection import reflection as avomodel
 
-class MyMplCanvas(FigureCanvas):
-    """Ultimately, this is a QWidget (as well as a FigureCanvasAgg, etc.)."""
-    def __init__(self, parent=None, width=5, height=4, dpi=100):
-        fig = Figure(figsize=(width, height), dpi=dpi)
-        self.axes = fig.add_subplot(111)
-        self.axes.hold(False)  # We want the axes cleared every time plot() is called
-
-        self.compute_initial_figure()
-        FigureCanvas.__init__(self, fig)
-        self.setParent(parent)
-
-        FigureCanvas.setSizePolicy(self, QSizePolicy.Expanding, QSizePolicy.Expanding)
-        FigureCanvas.updateGeometry(self)
-
-    def compute_initial_figure(self):
-        pass
-
-
-class MyStaticMplCanvas(MyMplCanvas):
-    def compute_initial_figure(self):
-        vp1 = 12250.
-        vp2 = 11600.
-        vs1 = 6620.
-        vs2 = 4050.
-        rho1 = 2.66
-        rho2 = 2.34
-        min_theta = 0
-        max_theta = 60
-        step_theta = 1
-        theta = np.arange(min_theta, max_theta, step_theta)
-
-        avo = avomodel.zoeppritz_rpp(vp1, vs1, rho1, vp2, vs2, rho2, theta)
-        print('avo:  ', avo)
-        """
-        self.plt.plot(theta, avo, label="AVO")
-        self.plt.axis([min_theta, max_theta, -1, 1])
-        self.plt.xlabel('Theta')
-        self.plt.ylabel('Ref')
-        self.plt.legend()
-        """
-        self.axes.plot()
-        self.axes.plot(min_theta, max_theta, -1, 1)
-
-        #self.axes.plot([min_theta, max_theta, -1, 1])
 
 
 class mainWindow(QWidget):
@@ -220,6 +176,20 @@ class mainWindow(QWidget):
         self.rhoUpperValue = QLineEdit(self)
         self.rhoLowerValue = QLineEdit(self)
 
+    def compute_initial_figure(self):
+        vp1 = 12250.
+        vp2 = 11600.
+        vs1 = 6620.
+        vs2 = 4050.
+        rho1 = 2.66
+        rho2 = 2.34
+        min_theta = 0
+        max_theta = 60
+        step_theta = 1
+        theta = np.arange(min_theta, max_theta, step_theta)
+
+        avo = avomodel.zoeppritz_rpp(vp1, vs1, rho1, vp2, vs2, rho2, theta)
+        print('avo:  ', avo)
 
     def on_vpUpperSliderChange(self):
         value = str( self.vpUpperSlider.value() )
