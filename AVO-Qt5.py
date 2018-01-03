@@ -1,18 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import pyqtgraph as pg
+import numpy as np
 from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QSlider, \
                             QVBoxLayout, QHBoxLayout, QSizePolicy, \
                             QLineEdit, QApplication
 from PyQt5.QtCore import QCoreApplication, Qt
 from PyQt5.QtGui import QIcon
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.figure import Figure
 from bruges.reflection import reflection as avomodel
-
-
 
 class mainWindow(QWidget):
 
@@ -80,6 +76,12 @@ class mainWindow(QWidget):
         self.rhoLowerSlider.valueChanged.connect(self.on_rhoLowerSliderChange)
 
         plotBox = QHBoxLayout()
+        pw3 = pg.PlotWidget()
+        plotBox.addWidget(pw3)
+
+        #self.compute_avo()
+
+
         vBox1.addLayout(hBox1)
         vBox1.addLayout(hBox2)
         vBox1.addLayout(hBox3)
@@ -88,8 +90,6 @@ class mainWindow(QWidget):
         vBox1.addLayout(hBox6)
         vBox1.addLayout(plotBox)
 
-        sc = MyStaticMplCanvas(self, width=6, height=8, dpi=200)
-        plotBox.addWidget(sc)
         self.setLayout(vBox1)
 
         """
@@ -99,6 +99,32 @@ class mainWindow(QWidget):
         self.setWindowTitle('AVO plotter')
         self.setWindowIcon(QIcon('web.png'))
         self.show()
+
+    #def compute_avo(self):
+        vp1 = 12250.
+        vp2 = 11600.
+        vs1 = 6620.
+        vs2 = 4050.
+        rho1 = 2.66
+        rho2 = 2.34
+        min_theta = 0
+        max_theta = 60
+        step_theta = 1
+        theta = np.arange(min_theta, max_theta, step_theta)
+        avo = avomodel.zoeppritz_rpp(vp1, vs1, rho1, vp2, vs2, rho2, theta)
+        print('avo:  ', avo)
+        ## Test large numbers
+        curve = pw3.plot(avo, clickable=True)
+        curve.curve.setClickable(False)
+        curve.setPen('w')  ## white pen
+        # curve.setShadowPen(pg.mkPen((70, 70, 30), width=6, cosmetic=True))
+
+        # lr = pg.LinearRegionItem([1, 30], bounds=[0, 100], movable=True)
+        # pw3.addItem(lr)
+        # line = pg.InfiniteLine(angle=90, movable=True)
+        # pw3.addItem(line)
+        # line.setBounds([0, 200])
+
 
 
     def initVpComponents(self):
@@ -176,20 +202,7 @@ class mainWindow(QWidget):
         self.rhoUpperValue = QLineEdit(self)
         self.rhoLowerValue = QLineEdit(self)
 
-    def compute_initial_figure(self):
-        vp1 = 12250.
-        vp2 = 11600.
-        vs1 = 6620.
-        vs2 = 4050.
-        rho1 = 2.66
-        rho2 = 2.34
-        min_theta = 0
-        max_theta = 60
-        step_theta = 1
-        theta = np.arange(min_theta, max_theta, step_theta)
 
-        avo = avomodel.zoeppritz_rpp(vp1, vs1, rho1, vp2, vs2, rho2, theta)
-        print('avo:  ', avo)
 
     def on_vpUpperSliderChange(self):
         value = str( self.vpUpperSlider.value() )
