@@ -2,40 +2,22 @@
 
 import sys
 import pyqtgraph
-import numpy as np
 from PyQt5.QtWidgets import QWidget, QLabel, QSlider, \
                             QVBoxLayout, QHBoxLayout, \
                             QLineEdit, QApplication, QSpacerItem
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
-from bruges.reflection import reflection as avomodel
-
+import AVONumerical
 
 class mainWindow(QWidget):
-
-    VP_MIN = 100
-    VP_MAX = 10000
-    VP_STEP = 50
-    VP_UPPER_INITIAL = 2730
-    VP_LOWER_INITIAL = 2050
-
-    VS_MIN = 100
-    VS_MAX = 10000
-    VS_STEP = 50
-    VS_UPPER_INITIAL = 2470
-    VS_LOWER_INITIAL = 4000
-
-    RHO_MIN = 1000
-    RHO_MAX = 3500
-    RHO_STEP = 50
-    RHO_UPPER_INITIAL = 1705
-    RHO_LOWER_INITIAL = 1450
 
     def __init__(self):
         super().__init__()
         self.initUI()
 
     def initUI(self):
+        self.avoCalc = AVONumerical.avoNumerical(self)
+
         hBox1 = QHBoxLayout()
         hBox2 = QHBoxLayout()
         hBox3 = QHBoxLayout()
@@ -44,6 +26,7 @@ class mainWindow(QWidget):
         hBox5 = QHBoxLayout()
         hBox6 = QHBoxLayout()
         hSpacer = QHBoxLayout()
+        vSpacer  = QHBoxLayout()
         vBox1 = QVBoxLayout()
 
         self.initVpComponents()
@@ -96,8 +79,12 @@ class mainWindow(QWidget):
         vBox1.addLayout(hBox6)
         vBox1.addLayout(plotBox)
 
+        vSpacer.addSpacerItem(QSpacerItem(100, 20))
+        vBox1.addLayout(vSpacer)
+
         self.setLayout(vBox1)
-        self.calculateAVO()
+        self.avoCalc.calculateavo()
+        #self.calculateAVO()
 
         """
         Size and display
@@ -107,40 +94,6 @@ class mainWindow(QWidget):
         self.setWindowIcon(QIcon('web.png'))
         self.show()
 
-    def calculateAVO(self):
-        min_theta = 0
-        max_theta = 50
-        step_theta = 1
-        theta = np.arange(min_theta, max_theta, step_theta)
-        self.avoplot.getPlotItem().clear()
-        self.igplot.getPlotItem().clear()
-        self.avoplot.setXRange(min_theta, max_theta)
-        self.avoplot.setYRange(-1, 1)
-
-        self.igplot.setXRange(-1, 1)
-        self.igplot.setYRange(-1, 1)
-
-
-        zoe_avo = avomodel.zoeppritz_rpp(self.vpUpperSlider.value(), self.vsUpperSlider.value(), self.rhoUpperSlider.value()/1000,
-                                     self.vpLowerSlider.value(), self.vsLowerSlider.value(), self.rhoLowerSlider.value()/1000, theta)
-
-        shuey_avo = avomodel.shuey(self.vpUpperSlider.value(), self.vsUpperSlider.value(), self.rhoUpperSlider.value()/1000,
-                                     self.vpLowerSlider.value(), self.vsLowerSlider.value(), self.rhoLowerSlider.value()/1000, theta)
-
-        ar_avo = avomodel.akirichards(self.vpUpperSlider.value(), self.vsUpperSlider.value(), self.rhoUpperSlider.value()/1000,
-                                     self.vpLowerSlider.value(), self.vsLowerSlider.value(), self.rhoLowerSlider.value()/1000, theta)
-
-        G, I = np.polyfit(theta, zoe_avo, 1)
-        self.igplot.plot([I], [G], pen=pyqtgraph.mkPen(None), symbol='o', brush='r')
-        #self.igplot.plot(I, G)
-        print('I, G: ', I, G)
-
-        # one of: r, g, b, c, m, y, k, w
-        self.avoplot.plot(theta, zoe_avo).curve.setPen('r')
-        self.avoplot.plot(theta, zoe_avo).curve.setShadowPen(pyqtgraph.mkPen((70, 70, 30), width=6, cosmetic=True))
-        self.avoplot.plot(theta, shuey_avo).curve.setPen('g')
-        self.avoplot.plot(theta, ar_avo).curve.setPen('y')
-
     def initVpComponents(self):
         self.vpUpperLabel = QLabel("Vp Upper")
         self.vpLowerLabel = QLabel("Vp Lower")
@@ -148,16 +101,16 @@ class mainWindow(QWidget):
         Sliders
         """
         self.vpUpperSlider = QSlider(Qt.Horizontal)
-        self.vpUpperSlider.setMinimum(self.VP_MIN)
-        self.vpUpperSlider.setMaximum(self.VP_MAX)
-        self.vpUpperSlider.setValue(self.VP_UPPER_INITIAL)
+        self.vpUpperSlider.setMinimum(self.avoCalc.VP_MIN)
+        self.vpUpperSlider.setMaximum(self.avoCalc.VP_MAX)
+        self.vpUpperSlider.setValue(self.avoCalc.VP_UPPER_INITIAL)
         self.vpUpperSlider.setTickPosition(QSlider.TicksBelow)
         self.vpUpperSlider.setTickInterval(50)
 
         self.vpLowerSlider = QSlider(Qt.Horizontal)
-        self.vpLowerSlider.setMinimum(self.VP_MIN)
-        self.vpLowerSlider.setMaximum(self.VP_MAX)
-        self.vpLowerSlider.setValue(self.VP_LOWER_INITIAL)
+        self.vpLowerSlider.setMinimum(self.avoCalc.VP_MIN)
+        self.vpLowerSlider.setMaximum(self.avoCalc.VP_MAX)
+        self.vpLowerSlider.setValue(self.avoCalc.VP_LOWER_INITIAL)
         self.vpLowerSlider.setTickPosition(QSlider.TicksBelow)
         self.vpLowerSlider.setTickInterval(50)
         """
@@ -165,8 +118,8 @@ class mainWindow(QWidget):
         """
         self.vpUpperValue = QLineEdit(self)
         self.vpLowerValue = QLineEdit(self)
-        self.vpUpperValue.setText(str(self.VP_UPPER_INITIAL))
-        self.vpLowerValue.setText(str(self.VP_LOWER_INITIAL))
+        self.vpUpperValue.setText(str(self.avoCalc.VP_UPPER_INITIAL))
+        self.vpLowerValue.setText(str(self.avoCalc.VP_LOWER_INITIAL))
 
 
     def initVsComponents(self):
@@ -176,16 +129,16 @@ class mainWindow(QWidget):
         Slidevs
         """
         self.vsUpperSlider = QSlider(Qt.Horizontal)
-        self.vsUpperSlider.setMinimum(self.VS_MIN)
-        self.vsUpperSlider.setMaximum(self.VS_MAX)
-        self.vsUpperSlider.setValue(self.VS_UPPER_INITIAL)
+        self.vsUpperSlider.setMinimum(self.avoCalc.VS_MIN)
+        self.vsUpperSlider.setMaximum(self.avoCalc.VS_MAX)
+        self.vsUpperSlider.setValue(self.avoCalc.VS_UPPER_INITIAL)
         self.vsUpperSlider.setTickPosition(QSlider.TicksBelow)
         self.vsUpperSlider.setTickInterval(50)
 
         self.vsLowerSlider = QSlider(Qt.Horizontal)
-        self.vsLowerSlider.setMinimum(self.VS_MIN)
-        self.vsLowerSlider.setMaximum(self.VS_MAX)
-        self.vsLowerSlider.setValue(self.VS_LOWER_INITIAL)
+        self.vsLowerSlider.setMinimum(self.avoCalc.VS_MIN)
+        self.vsLowerSlider.setMaximum(self.avoCalc.VS_MAX)
+        self.vsLowerSlider.setValue(self.avoCalc.VS_LOWER_INITIAL)
         self.vsLowerSlider.setTickPosition(QSlider.TicksBelow)
         self.vsLowerSlider.setTickInterval(50)
         """
@@ -193,8 +146,8 @@ class mainWindow(QWidget):
         """
         self.vsUpperValue = QLineEdit(self)
         self.vsLowerValue = QLineEdit(self)
-        self.vsUpperValue.setText(str(self.VS_UPPER_INITIAL))
-        self.vsLowerValue.setText(str(self.VS_LOWER_INITIAL))
+        self.vsUpperValue.setText(str(self.avoCalc.VS_UPPER_INITIAL))
+        self.vsLowerValue.setText(str(self.avoCalc.VS_LOWER_INITIAL))
 
     def initRhoComponents(self):
         self.rhoUpperLabel = QLabel("Rho Upper")
@@ -203,55 +156,55 @@ class mainWindow(QWidget):
         Sliders
         """
         self.rhoUpperSlider = QSlider(Qt.Horizontal)
-        self.rhoUpperSlider.setMinimum(self.RHO_MIN)
-        self.rhoUpperSlider.setMaximum(self.RHO_MAX)
-        self.rhoUpperSlider.setValue(self.RHO_UPPER_INITIAL)
+        self.rhoUpperSlider.setMinimum(self.avoCalc.RHO_MIN)
+        self.rhoUpperSlider.setMaximum(self.avoCalc.RHO_MAX)
+        self.rhoUpperSlider.setValue(self.avoCalc.RHO_UPPER_INITIAL)
         self.rhoUpperSlider.setTickPosition(QSlider.TicksBelow)
-        self.rhoUpperSlider.setTickInterval(self.RHO_STEP)
+        self.rhoUpperSlider.setTickInterval(self.avoCalc.RHO_STEP)
 
         self.rhoLowerSlider = QSlider(Qt.Horizontal)
-        self.rhoLowerSlider.setMinimum(self.RHO_MIN)
-        self.rhoLowerSlider.setMaximum(self.RHO_MAX)
-        self.rhoLowerSlider.setValue(self.RHO_LOWER_INITIAL)
+        self.rhoLowerSlider.setMinimum(self.avoCalc.RHO_MIN)
+        self.rhoLowerSlider.setMaximum(self.avoCalc.RHO_MAX)
+        self.rhoLowerSlider.setValue(self.avoCalc.RHO_LOWER_INITIAL)
         self.rhoLowerSlider.setTickPosition(QSlider.TicksBelow)
-        self.rhoLowerSlider.setTickInterval(self.RHO_STEP)
+        self.rhoLowerSlider.setTickInterval(self.avoCalc.RHO_STEP)
         """
         Text boxes
         """
         self.rhoUpperValue = QLineEdit(self)
         self.rhoLowerValue = QLineEdit(self)
-        self.rhoUpperValue.setText(str(self.RHO_UPPER_INITIAL))
-        self.rhoLowerValue.setText(str(self.RHO_LOWER_INITIAL))
+        self.rhoUpperValue.setText(str(self.avoCalc.RHO_UPPER_INITIAL))
+        self.rhoLowerValue.setText(str(self.avoCalc.RHO_LOWER_INITIAL))
 
     def on_vpUpperSliderChange(self):
         value = str( self.vpUpperSlider.value() )
         self.vpUpperValue.setText(value)
-        self.calculateAVO()
+        self.avoCalc.calculateavo()
 
     def on_vsUpperSliderChange(self):
         value = str( self.vsUpperSlider.value() )
         self.vsUpperValue.setText(value)
-        self.calculateAVO()
+        self.avoCalc.calculateavo()
 
     def on_rhoUpperSliderChange(self):
         value = str( self.rhoUpperSlider.value() / 1000 )
         self.rhoUpperValue.setText(value)
-        self.calculateAVO()
+        self.avoCalc.calculateavo()
 
     def on_vpLowerSliderChange(self):
         value = str( self.vpLowerSlider.value() )
         self.vpLowerValue.setText(value)
-        self.calculateAVO()
+        self.avoCalc.calculateavo()
 
     def on_vsLowerSliderChange(self):
         value = str( self.vsLowerSlider.value() )
         self.vsLowerValue.setText(value)
-        self.calculateAVO()
+        self.avoCalc.calculateavo()
 
     def on_rhoLowerSliderChange(self):
         value = str( self.rhoLowerSlider.value() / 1000 )
         self.rhoLowerValue.setText(value)
-        self.calculateAVO()
+        self.avoCalc.calculateavo()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
