@@ -9,15 +9,15 @@ class AVONumerical:
     ''' A class to isolate the AVO calls from the main gui'''
     # Extents and step of sliders
     # min, max, step
-    vpextents = (100, 10000, 50)
-    vsextents = (100, 10000, 50)
-    rhoextents = (1000, 3500, 50)   #kg/cc
+    vpextents = (100, 10000, 50)    # m/s
+    vsextents = (100, 10000, 50)    # m/s
+    rhoextents = (1000, 3500, 50)   # kg/cc
 
     # Initial values for sliders, text and AVO model
     # upper medium value, lower medium value
-    vpinitial = (2730, 2050)
-    vsinitial = (2470, 4000)
-    rhoinitial = (1705, 1450)   #kg/cc
+    vpinitial = (5116, 4082)    # m/s
+    vsinitial = (2470, 4000)    # m/s
+    rhoinitial = (1705, 1450)   # kg/cc
 
     theta = (0, 50, 1)
     thetarange = np.arange(theta[0], theta[1], theta[2])
@@ -47,12 +47,17 @@ class AVONumerical:
 
     def getig(self):
         g, i = -0.1, 0.1
-        return g, i
+        return i, g
 
     def getthetarange(self):
         return AVONumerical.thetarange
 
-    def getinitialproperties(self):
+    def getthetamin(self):
+        pass
 
+    def getthetamax(self):
+        pass
+
+    def getinitialproperties(self):
         pass
 
