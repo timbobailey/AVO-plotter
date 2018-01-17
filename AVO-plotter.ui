@@ -10,8 +10,14 @@
     <height>731</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>867</width>
+    <height>731</height>
+   </size>
+  </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>AVO Plotter</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QPushButton" name="pushButton_quit">
@@ -37,6 +43,9 @@
      </rect>
     </property>
     <layout class="QVBoxLayout" name="slidersvLayout">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetNoConstraint</enum>
+     </property>
      <item>
       <layout class="QHBoxLayout" name="hLayout1">
        <item>
@@ -47,7 +56,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QSlider" name="horizontalSlider_5">
+        <widget class="QSlider" name="horizontalSlider_vp1">
          <property name="enabled">
           <bool>true</bool>
          </property>
@@ -60,10 +69,13 @@
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
+         <property name="tickPosition">
+          <enum>QSlider::TicksBelow</enum>
+         </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="lineEdit_1">
+        <widget class="QLineEdit" name="lineEdit_vp1">
          <property name="maximumSize">
           <size>
            <width>80</width>
@@ -79,12 +91,12 @@
        <item>
         <widget class="QLabel" name="label_4">
          <property name="text">
-          <string>Vp Upper</string>
+          <string>Vs Upper</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QSlider" name="horizontalSlider_4">
+        <widget class="QSlider" name="horizontalSlider_vs1">
          <property name="enabled">
           <bool>true</bool>
          </property>
@@ -97,10 +109,13 @@
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
+         <property name="tickPosition">
+          <enum>QSlider::TicksBelow</enum>
+         </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="lineEdit_4">
+        <widget class="QLineEdit" name="lineEdit_vs1">
          <property name="maximumSize">
           <size>
            <width>80</width>
@@ -116,12 +131,12 @@
        <item>
         <widget class="QLabel" name="label_3">
          <property name="text">
-          <string>Vp Upper</string>
+          <string>Rho Upper</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QSlider" name="horizontalSlider_3">
+        <widget class="QSlider" name="horizontalSlider_rho1">
          <property name="enabled">
           <bool>true</bool>
          </property>
@@ -134,10 +149,13 @@
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
+         <property name="tickPosition">
+          <enum>QSlider::TicksBelow</enum>
+         </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="lineEdit_3">
+        <widget class="QLineEdit" name="lineEdit_rho1">
          <property name="maximumSize">
           <size>
            <width>80</width>
@@ -169,12 +187,12 @@
        <item>
         <widget class="QLabel" name="label_5">
          <property name="text">
-          <string>Vp Upper</string>
+          <string>Vp Lower</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QSlider" name="horizontalSlider_6">
+        <widget class="QSlider" name="horizontalSlider_vp2">
          <property name="enabled">
           <bool>true</bool>
          </property>
@@ -187,10 +205,13 @@
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
+         <property name="tickPosition">
+          <enum>QSlider::TicksBelow</enum>
+         </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="lineEdit_5">
+        <widget class="QLineEdit" name="lineEdit_vp2">
          <property name="maximumSize">
           <size>
            <width>80</width>
@@ -206,12 +227,12 @@
        <item>
         <widget class="QLabel" name="label_6">
          <property name="text">
-          <string>Vp Upper</string>
+          <string>Vs Lower</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QSlider" name="horizontalSlider_2">
+        <widget class="QSlider" name="horizontalSlider_vs2">
          <property name="enabled">
           <bool>true</bool>
          </property>
@@ -224,10 +245,13 @@
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
+         <property name="tickPosition">
+          <enum>QSlider::TicksBelow</enum>
+         </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="lineEdit_6">
+        <widget class="QLineEdit" name="lineEdit_vs2">
          <property name="maximumSize">
           <size>
            <width>80</width>
@@ -243,12 +267,12 @@
        <item>
         <widget class="QLabel" name="label_7">
          <property name="text">
-          <string>Vp Upper</string>
+          <string>Rho Upper</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QSlider" name="horizontalSlider">
+        <widget class="QSlider" name="horizontalSlider_rho2">
          <property name="enabled">
           <bool>true</bool>
          </property>
@@ -261,10 +285,13 @@
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
+         <property name="tickPosition">
+          <enum>QSlider::TicksBelow</enum>
+         </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="lineEdit_7">
+        <widget class="QLineEdit" name="lineEdit_rho2">
          <property name="maximumSize">
           <size>
            <width>80</width>
@@ -286,43 +313,52 @@
       <height>381</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="plotLayout"/>
+    <layout class="QHBoxLayout" name="plotLayout">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetNoConstraint</enum>
+     </property>
+    </layout>
    </widget>
    <widget class="QWidget" name="verticalLayoutWidget_2">
     <property name="geometry">
      <rect>
       <x>360</x>
-      <y>149</y>
-      <width>160</width>
-      <height>111</height>
+      <y>170</y>
+      <width>105</width>
+      <height>92</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetNoConstraint</enum>
+     </property>
      <item>
-      <widget class="QCheckBox" name="checkBox">
+      <widget class="QCheckBox" name="checkBox_zoe">
        <property name="text">
-        <string>CheckBox</string>
+        <string>Zoeppritz</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="checkBox_2">
+      <widget class="QCheckBox" name="checkBox_aandr">
        <property name="text">
-        <string>CheckBox</string>
+        <string>Aki and Richards</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="checkBox_3">
+      <widget class="QCheckBox" name="checkBox_shuey">
        <property name="text">
-        <string>CheckBox</string>
+        <string>Shuey</string>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="checkBox_4">
-       <property name="text">
-        <string>CheckBox</string>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -335,7 +371,7 @@
      <x>0</x>
      <y>0</y>
      <width>867</width>
-     <height>21</height>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
