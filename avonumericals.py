@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import pyqtgraph
 from bruges.reflection import reflection as avomodel
 
 
@@ -15,9 +14,9 @@ class AVONumerical:
 
     # Initial values for sliders, text and AVO model
     # upper medium value, lower medium value
-    vpinitial = (5116, 4082)    # m/s
-    vsinitial = (2470, 4000)    # m/s
-    rhoinitial = (1705, 1450)   # kg/cc
+    vpinitial = (3110, 1980)    # m/s
+    vsinitial = (2360, 2720)    # m/s
+    rhoinitial = (1920, 3050)   # kg/cc
 
     theta = (0, 50, 1)
     thetarange = np.arange(theta[0], theta[1], theta[2])
@@ -26,23 +25,23 @@ class AVONumerical:
          self.maingui = maingui
 
     def getavo(self, method='zoe'):
-            if method == 'zoe':
-                return avomodel.zoeppritz_rpp(self.maingui.vpUpperSlider.value(), self.maingui.vsUpperSlider.value(),
-                                        self.maingui.rhoUpperSlider.value() / 1000,
-                                        self.maingui.vpLowerSlider.value(), self.maingui.vsLowerSlider.value(),
-                                        self.maingui.rhoLowerSlider.value() / 1000, AVONumerical.thetarange)
+        if method == 'zoe':
+                return avomodel.zoeppritz_rpp(self.maingui.horizontalSlider_vp1.value(), self.maingui.horizontalSlider_vs1.value(),
+                                        self.maingui.horizontalSlider_rho1.value() / 1000,
+                                        self.maingui.horizontalSlider_vp2.value(), self.maingui.horizontalSlider_vs2.value(),
+                                        self.maingui.horizontalSlider_rho2.value() / 1000, AVONumerical.thetarange)
 
-            elif method == 'shuey':
-                return avomodel.shuey(self.maingui.vpUpperSlider.value(), self.maingui.vsUpperSlider.value(),
-                                   self.maingui.rhoUpperSlider.value() / 1000,
-                                   self.maingui.vpLowerSlider.value(), self.maingui.vsLowerSlider.value(),
-                                   self.maingui.rhoLowerSlider.value() / 1000, AVONumerical.thetarange)
+        elif method == 'shuey':
+                return avomodel.shuey(self.maingui.horizontalSlider_vp1.value(), self.maingui.horizontalSlider_vs1.value(),
+                                        self.maingui.horizontalSlider_rho1.value() / 1000,
+                                        self.maingui.horizontalSlider_vp2.value(), self.maingui.horizontalSlider_vs2.value(),
+                                        self.maingui.horizontalSlider_rho2.value() / 1000, AVONumerical.thetarange)
 
-            elif method == 'ar':
-                return avomodel.akirichards(self.maingui.vpUpperSlider.value(), self.maingui.vsUpperSlider.value(),
-                                      self.maingui.rhoUpperSlider.value() / 1000,
-                                      self.maingui.vpLowerSlider.value(), self.maingui.vsLowerSlider.value(),
-                                      self.maingui.rhoLowerSlider.value() / 1000, AVONumerical.thetarange)
+        elif method == 'ar':
+                return avomodel.akirichards(self.maingui.horizontalSlider_vp1.value(), self.maingui.horizontalSlider_vs1.value(),
+                                        self.maingui.horizontalSlider_rho1.value() / 1000,
+                                        self.maingui.horizontalSlider_vp2.value(), self.maingui.horizontalSlider_vs2.value(),
+                                        self.maingui.horizontalSlider_rho2.value() / 1000, AVONumerical.thetarange)
 
 
     def getig(self):
